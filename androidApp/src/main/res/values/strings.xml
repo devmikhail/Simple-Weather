@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_temperature">temperature %s %s</string>
+    <string name="main_title">Weather App</string>
+    <string name="main_city">City</string>
+</resources>
