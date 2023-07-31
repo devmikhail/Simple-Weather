@@ -1,10 +1,9 @@
 package com.devmikespb.simpleweather.store
 
-import co.touchlab.kermit.Logger
 import com.devmikespb.simpleweather.mvi.ActionDispatcher
 import com.devmikespb.simpleweather.mvi.Store
-import com.devmikespb.simpleweather.presentation.WeatherReducer
-import com.devmikespb.simpleweather.presentation.WeatherStore
+import com.devmikespb.simpleweather.presentation.main.WeatherReducer
+import com.devmikespb.simpleweather.presentation.main.WeatherStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

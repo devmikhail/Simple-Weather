@@ -1,10 +1,11 @@
-package com.devmikespb.simpleweather.presentation
+package com.devmikespb.simpleweather.presentation.main
 
+import com.devmike.core.mvi.StoreImpl
+import com.devmikespb.simpleweather.domain.entity.Place
+import com.devmikespb.simpleweather.domain.entity.PlaceWeather
 import com.devmikespb.simpleweather.mvi.ActionDispatcher
 import com.devmikespb.simpleweather.mvi.Reducer
 import com.devmikespb.simpleweather.mvi.Store
-import com.devmike.core.mvi.StoreImpl
-import com.devmikespb.simpleweather.domain.entity.PlaceWeather
 import kotlinx.coroutines.CoroutineScope
 
 class WeatherStore private constructor(
@@ -16,10 +17,18 @@ class WeatherStore private constructor(
         val cityName: String? = null,
         val cityWeather: PlaceWeather? = null,
         val isCityWeatherLoading: Boolean = false,
+        val isShowTestScreen: Boolean = false,
+        val commandToExecute: Command? = null,
     )
 
-    sealed class Action {
-        data class UpdateCityName(val cityName: String): Action()
+    sealed interface Action {
+        data class UpdateCityName(val cityName: String) : Action
+        data class ExecuteCommand(val command: Command) : Action
+        data class CommandWasExecuted(val command: Command) : Action
+    }
+
+    sealed interface Command {
+        data class DetailsScreen(val place: Place, val placeWeather: PlaceWeather) : Command
     }
 
     companion object {
@@ -27,7 +36,7 @@ class WeatherStore private constructor(
             initialState: State,
             reducer: Reducer<State>,
             coroutineScope: CoroutineScope,
-        ) : WeatherStore {
+        ): WeatherStore {
             val storeImpl = StoreImpl<Action, State>(
                 initialState = initialState,
                 initialActions = emptyList(),
