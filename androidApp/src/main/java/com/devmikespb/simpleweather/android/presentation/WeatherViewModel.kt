@@ -2,28 +2,28 @@ package com.devmikespb.simpleweather.android.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.devmikespb.simpleweather.mvi.ActionDispatcher
 import com.devmikespb.simpleweather.mvi.Store
-import com.devmikespb.simpleweather.presentation.main.WeatherReducer
 import com.devmikespb.simpleweather.presentation.main.WeatherStore
+import com.devmikespb.simpleweather.presentation.main.WeatherStore.Action
+import com.devmikespb.simpleweather.presentation.main.WeatherStore.State
+import com.devmikespb.simpleweather.presentation.main.WeatherUpdater
 import kotlinx.coroutines.flow.StateFlow
 
 class WeatherViewModel(
-    reducer: WeatherReducer,
+    updater: WeatherUpdater,
 ) : ViewModel(),
-    ActionDispatcher<WeatherStore.Action>,
-    Store<WeatherStore.State> {
+    Store<Action, State> {
 
     private val store: WeatherStore = WeatherStore.create(
-        initialState = WeatherStore.State(),
-        reducer = reducer,
+        initialState = State(),
+        updater = updater,
         coroutineScope = viewModelScope,
     )
 
-    override suspend fun dispatch(action: WeatherStore.Action) {
+    override suspend fun dispatch(action: Action) {
         store.dispatch(action)
     }
 
-    override val stateFlow: StateFlow<WeatherStore.State> =
+    override val stateFlow: StateFlow<State> =
         store.stateFlow
 }

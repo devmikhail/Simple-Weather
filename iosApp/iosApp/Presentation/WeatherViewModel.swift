@@ -30,7 +30,7 @@ final class WeatherViewModel: ObservableObject {
             .flatMap { (city:String) -> AnyPublisher <Void, Never> in
                 return Deferred {
                     Future<Void, Error> { promise in
-                        wrapped.dispatch(action: WeatherStore.ActionUpdateCityName(cityName:city)) { optionalError in
+                        wrapped.dispatch(action: WeatherStoreActionUpdateCityName(cityName:city)) { optionalError in
                             if let error = optionalError {
                                 promise(.failure(error))
                             } else {

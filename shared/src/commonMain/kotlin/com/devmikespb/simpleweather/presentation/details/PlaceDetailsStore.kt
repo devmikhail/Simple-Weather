@@ -1,19 +1,17 @@
 package com.devmikespb.simpleweather.presentation.details
 
-import com.devmike.core.mvi.StoreImpl
 import com.devmikespb.simpleweather.domain.entity.Place
 import com.devmikespb.simpleweather.domain.entity.PlaceWeather
-import com.devmikespb.simpleweather.mvi.ActionDispatcher
-import com.devmikespb.simpleweather.mvi.Reducer
+import com.devmikespb.simpleweather.mvi.ElmLikeStoreImpl
 import com.devmikespb.simpleweather.mvi.Store
+import com.devmikespb.simpleweather.mvi.Updater
 import com.devmikespb.simpleweather.presentation.details.PlaceDetailsStore.Action
 import com.devmikespb.simpleweather.presentation.details.PlaceDetailsStore.State
 import kotlinx.coroutines.CoroutineScope
 
 class PlaceDetailsStore private constructor(
-    private val storeImpl: StoreImpl<Action, State>,
-) : ActionDispatcher<Action> by storeImpl,
-    Store<State> by storeImpl {
+    private val storeImpl: ElmLikeStoreImpl<Action, State>,
+) : Store<Action, State> by storeImpl {
     data class State(
         val place: Place,
         val placeWeather: PlaceWeather,
@@ -32,15 +30,16 @@ class PlaceDetailsStore private constructor(
     companion object {
         fun create(
             initialState: State,
-            reducer: Reducer<State>,
+            updater: Updater<Action, State>,
             coroutineScope: CoroutineScope,
         ): PlaceDetailsStore =
-            StoreImpl<Action, State>(
-                initialState = initialState,
-                initialActions = emptyList(),
-                coroutineScope = coroutineScope,
-                reducer = reducer,
+            PlaceDetailsStore(
+                ElmLikeStoreImpl(
+                    initialState = initialState,
+                    initialActions = emptyList(),
+                    coroutineScope = coroutineScope,
+                    updater = updater,
+                )
             )
-                .let { PlaceDetailsStore(it) }
     }
 }

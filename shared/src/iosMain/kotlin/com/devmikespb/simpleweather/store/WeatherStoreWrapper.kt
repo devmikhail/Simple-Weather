@@ -1,9 +1,8 @@
 package com.devmikespb.simpleweather.store
 
-import com.devmikespb.simpleweather.mvi.ActionDispatcher
 import com.devmikespb.simpleweather.mvi.Store
-import com.devmikespb.simpleweather.presentation.main.WeatherReducer
 import com.devmikespb.simpleweather.presentation.main.WeatherStore
+import com.devmikespb.simpleweather.presentation.main.WeatherUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -11,13 +10,12 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.StateFlow
 
 class WeatherStoreWrapper(
-    weatherReducer: WeatherReducer
-): ActionDispatcher<WeatherStore.Action>,
-    Store<WeatherStore.State> {
+    weatherUpdater: WeatherUpdater,
+) : Store<WeatherStore.Action, WeatherStore.State> {
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private val store = WeatherStore.create(
         initialState = WeatherStore.State(),
-        reducer = weatherReducer,
+        updater = weatherUpdater,
         coroutineScope = scope,
     )
 

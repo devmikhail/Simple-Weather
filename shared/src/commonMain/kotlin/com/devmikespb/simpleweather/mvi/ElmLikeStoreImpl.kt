@@ -1,7 +1,7 @@
 package com.devmikespb.simpleweather.mvi
 
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,16 +12,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class StoreImpl<ACTION : Any, STATE> constructor(
+class ElmLikeStoreImpl<ACTION, STATE>(
     initialState: STATE,
-    coroutineScope: CoroutineScope,
-    private val reducer: Reducer<STATE>,
-    initialActions: List<ACTION> = emptyList(),
-) : Store<ACTION, STATE>,
-    ActionDispatcher<ACTION> {
-
+    initialActions: List<ACTION>,
+    private val coroutineScope: CoroutineScope,
+    private val updater: Updater<ACTION, STATE>,
+) : Store<ACTION, STATE> {
     private val mutableStateFlow: MutableStateFlow<STATE> = MutableStateFlow(initialState)
-    private val actionFlow: MutableSharedFlow<Any> = MutableSharedFlow()
+    private val actionFlow: MutableSharedFlow<ACTION> = MutableSharedFlow()
     override val stateFlow: StateFlow<STATE> = mutableStateFlow.asStateFlow()
 
     override suspend fun dispatch(action: ACTION) {
@@ -33,26 +31,22 @@ class StoreImpl<ACTION : Any, STATE> constructor(
     init {
         actionFlow
             .onEach { action ->
-                Logger.d { "Got action: $action" }
+                var effect: Flow<ACTION>? = null
                 try {
-                    reducer.reduce(
-                        action = action,
-                        state = stateFlow.value,
-                        updateState = {
-                            mutableStateFlow.update { state ->
-                                state.it()
-                            }
-                        },
-                    )
+                    mutableStateFlow.update { state ->
+                        val result = updater.update(action = action, state = state)
+                        effect = result.sideEffect
+                        result.state ?: state
+                    }
                 } catch (th: Throwable) {
-                    Logger.w { "Caught throwable while handling action: $action, throwable: $th" }
+                    mutableStateFlow.update { state ->
+                        updater.onUnhandledError(th, state)
+                    }
+                }
+
+                effect?.let { flow ->
                     coroutineScope.launch {
-                        actionFlow.emit(
-                            HandleActionException(
-                                action = action,
-                                throwable = th,
-                            )
-                        )
+                        flow.collect(actionFlow)
                     }
                 }
             }
