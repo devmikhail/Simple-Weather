@@ -3,10 +3,10 @@ package com.devmikespb.simpleweather.android.ui.navigation
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import com.devmikespb.simpleweather.android.ui.navigation.argument.IntArgument
+import com.devmikespb.simpleweather.android.ui.navigation.argument.BooleanArgument
 
 open class BooleanDestination(name: String) : TypedDestination<Boolean> {
-    private val typedArgument = IntArgument
+    private val typedArgument = BooleanArgument
 
     private val argName: String = typedArgument.name
 

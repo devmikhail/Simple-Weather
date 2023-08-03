@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.lifecycle.SavedStateHandle
 
-class BooleanArgument : Argument<Boolean> {
+object BooleanArgument : Argument<Boolean> {
     override val name: String = "boolArg"
 
     override fun restoreFromSavedState(savedStateHandle: SavedStateHandle): Boolean =
