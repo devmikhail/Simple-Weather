@@ -1,6 +1,7 @@
 package com.devmikespb.simpleweather.android.ui.navigation.argument
 
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.lifecycle.SavedStateHandle
 
 class BooleanArgument : Argument<Boolean> {
@@ -14,4 +15,7 @@ class BooleanArgument : Argument<Boolean> {
 
     override fun convertToUrlSafeString(value: Boolean): String =
         value.toString()
+
+    override fun wrapToBundle(value: Boolean): Bundle =
+        bundleOf(name to value)
 }
