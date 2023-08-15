@@ -9,9 +9,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.devmikespb.simpleweather.android.ui.navigation.NavHost
-import com.devmikespb.simpleweather.android.ui.navigation.StringSerializableDestination
+import com.devmikespb.simpleweather.android.ui.navigation.TypedDestination
 import com.devmikespb.simpleweather.android.ui.navigation.UnitDestination
 import com.devmikespb.simpleweather.android.ui.navigation.addDestination
+import com.devmikespb.simpleweather.android.ui.navigation.argument.StringSerializableArgument
 import com.devmikespb.simpleweather.android.ui.navigation.navigate
 import com.devmikespb.simpleweather.android.ui.screen.details.PlaceDetailsScreen
 import com.devmikespb.simpleweather.android.ui.screen.details.PlaceDetailsScreenArguments
@@ -75,9 +76,8 @@ class MainActivity : ComponentActivity() {
 
 private object MainFlow {
     object SearchDestination : UnitDestination("Search")
-    object PlaceDetailsDestination : StringSerializableDestination<PlaceDetailsScreenArguments>(
+    object PlaceDetailsDestination : TypedDestination<PlaceDetailsScreenArguments>(
         "PlaceDetails",
-        PlaceDetailsScreenArguments.Companion
+        StringSerializableArgument(PlaceDetailsScreenArguments.Serializer),
     )
 }
-

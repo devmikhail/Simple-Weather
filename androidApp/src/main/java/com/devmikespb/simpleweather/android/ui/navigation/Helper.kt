@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -14,6 +15,7 @@ import androidx.navigation.NavigatorProvider
 import androidx.navigation.PopUpToBuilder
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.get
+import androidx.navigation.navOptions
 import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.toExtras
 import org.koin.core.annotation.KoinInternalApi
@@ -34,12 +36,18 @@ fun NavHostController.navigate(
     navOptions: NavOptions? = null,
 ) {
     navigate(
-        route = unitDestination.getNavigationString(Unit),
+        route = unitDestination.route,
         navOptions = navOptions,
     )
 }
 
-fun <T> TypedDestination<T>.toNavDestination(
+fun NavController.optionsReplaceCurrent(): NavOptions = navOptions {
+    this@optionsReplaceCurrent.currentDestination?.route?.let {
+        popUpTo(it) { inclusive = true }
+    }
+}
+
+fun RoutableDestination.toNavDestination(
     navigatorProvider: NavigatorProvider,
     content: @Composable (NavBackStackEntry) -> Unit,
 ): NavDestination =
@@ -56,7 +64,7 @@ fun <T> TypedDestination<T>.toNavDestination(
         }
 
 fun NavGraphBuilder.addDestination(
-    typedDestination: TypedDestination<*>,
+    typedDestination: RoutableDestination,
     content: @Composable (NavBackStackEntry) -> Unit,
 ) {
     addDestination(
@@ -67,7 +75,7 @@ fun NavGraphBuilder.addDestination(
 @Composable
 fun NavHost(
     navController: NavHostController,
-    startDestination: TypedDestination<*>,
+    startDestination: RoutableDestination,
     builder: NavGraphBuilder.() -> Unit,
 ) {
     androidx.navigation.compose.NavHost(
@@ -83,6 +91,16 @@ fun NavOptionsBuilder.popUpTo(
 ) {
     popUpTo(route = typedDestination.route, popUpToBuilder = popUpToBuilder)
 }
+
+fun NavController.findCurrentDestination(list: List<RoutableDestination>): RoutableDestination? =
+    currentDestination?.route?.let { currentRoute ->
+        list.forEach {
+            if (it.route == currentRoute) {
+                return@let it
+            }
+        }
+        return@let null
+    }
 
 // This is needed to inject arguments to a NavHost start destination.
 @OptIn(KoinInternalApi::class)

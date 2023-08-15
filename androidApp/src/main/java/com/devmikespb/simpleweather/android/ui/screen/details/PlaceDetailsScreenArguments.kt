@@ -11,7 +11,7 @@ data class PlaceDetailsScreenArguments(
     val place: Place,
     val weather: PlaceWeather,
 ) {
-    companion object : StringSerializer<PlaceDetailsScreenArguments> {
+    companion object Serializer : StringSerializer<PlaceDetailsScreenArguments> {
         override fun toString(t: PlaceDetailsScreenArguments): String =
             JSONObject(
                 mutableMapOf<String, Any?>(

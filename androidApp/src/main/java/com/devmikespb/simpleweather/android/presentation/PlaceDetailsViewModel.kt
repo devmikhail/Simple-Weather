@@ -19,7 +19,7 @@ class PlaceDetailsViewModel(
 ) : ViewModel(), Store<Action, State> {
 
     private val store = PlaceDetailsStore.create(
-        initialState = StringSerializableArgument(PlaceDetailsScreenArguments)
+        initialState = StringSerializableArgument(PlaceDetailsScreenArguments.Serializer)
             .restoreFromSavedState(savedStateHandle)
             .let {
                 State(it.place, it.weather)
