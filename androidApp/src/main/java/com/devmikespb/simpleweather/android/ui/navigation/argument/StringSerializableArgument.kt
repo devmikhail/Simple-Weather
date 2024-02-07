@@ -1,15 +1,14 @@
 package com.devmikespb.simpleweather.android.ui.navigation.argument
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavArgumentBuilder
 import androidx.navigation.NavType
 import com.devmikespb.simpleweather.android.ui.navigation.StringSerializer
-import java.net.URLEncoder
 
 class StringSerializableArgument<T>(private val stringSerializer: StringSerializer<T>) : Argument<T> {
-    private val ENCODING: String = "utf-8"
 
     override val name: String = "stringSerializableArg"
 
@@ -28,7 +27,7 @@ class StringSerializableArgument<T>(private val stringSerializer: StringSerializ
         stringSerializer.fromString(checkNotNull(checkNotNull(bundle).getString(name)))
 
     override fun convertToUrlSafeString(value: T): String =
-        URLEncoder.encode(stringSerializer.toString(value), ENCODING)
+        Uri.encode(stringSerializer.toString(value))
 
     override fun wrapToBundle(value: T): Bundle =
         bundleOf(name to stringSerializer.toString(value))

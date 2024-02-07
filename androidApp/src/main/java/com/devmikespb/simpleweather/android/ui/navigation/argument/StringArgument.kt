@@ -1,13 +1,12 @@
 package com.devmikespb.simpleweather.android.ui.navigation.argument
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavArgumentBuilder
 import androidx.navigation.NavType
-import java.net.URLEncoder
 
 object StringArgument : Argument<String> {
-    private val ENCODING: String = "utf-8"
 
     override val name: String = "stringArg"
 
@@ -26,5 +25,5 @@ object StringArgument : Argument<String> {
         checkNotNull(checkNotNull(bundle).getString(name))
 
     override fun convertToUrlSafeString(value: String): String =
-        URLEncoder.encode(value, ENCODING)
+        Uri.encode(value)
 }
